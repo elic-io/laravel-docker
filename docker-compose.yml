@@ -1,17 +1,83 @@
-laravel:
-  image: reflexions/docker-laravel:latest
-  ports:
-    - 8088:80
-  env_file: .env
-  links:
-    - database
-  volumes:
-    - .:/var/www/laravel
+version: '2'
+services:
 
-database:
-  image: postgres:9.6
-  ports:
-    - 5432:5432
-  env_file: .env
-  environment:
-    LC_ALL: C.UTF-8 
+  # NGINX
+  web:
+    image: rjdwebsites/realplaygaming:web
+    container_name: gotcha-web
+    volumes_from:
+      - app
+    ports:
+      - "8181:80"
+
+  # Laravel PHP
+  app:
+    # image: rjdwebsites/realplaygaming:app
+    # image: apptesting:latest
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+      # args:
+      #   buildno: 1
+    container_name: gotcha-app
+    # volumes:
+      # - ./:/var/www
+    env_file: ".env"
+    links:
+      - database
+      - engine
+    ports:
+      - "80:80"
+    expose:
+      - 80
+
+  # # F# Game engine
+  # engine:
+  #   image: elicio/gotcha-core:path_enhancements
+  #   container_name: gotcha-engine
+  #   links:
+  #     - eventstore
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - "EVENTSTORE_HOST=gotcha-events"
+
+  # # Storage for game engine
+  # eventstore:
+  #   image: eventstore/eventstore:latest
+  #   container_name: gotcha-events
+  #   ports:
+  #     - "2113:2113"
+  #     - "1113:1113"
+
+  # Redis event store
+#  redis:
+#    image: redis:latest
+#    container_name: gotcha-redis
+#    volumes:
+#      - ./redis/redis.conf:/etc/redis.conf
+#      - dbdata:/var/lib/redis
+#    environment:
+#      - "REDIS_PASSWORD=secret"
+#    ports:
+#      - "6379:6379"
+#    command: >
+#      sh -c "redis-server /etc/redis.conf"
+
+  # Postgres 9.6
+  database:
+    image: postgres:latest
+    container_name: gotcha-postgres
+    # volumes:
+    #   - dbdata:/var/lib/postgres
+    environment:
+      - "POSTGRES_DB=gotcha"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=secret"
+      - "POSTGRES_ROOT_PASSWORD=secret"
+      - "LC_ALL=C.UTF-8"
+    ports:
+        - "5432:5432"
+
+volumes:
+  dbdata:
