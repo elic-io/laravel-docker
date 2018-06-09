@@ -25,7 +25,7 @@ services:
     env_file: ".env"
     links:
       - database
-      - engine
+      # - engine
     ports:
       - "80:80"
     expose:
