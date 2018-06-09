@@ -1,0 +1,15 @@
+/node_modules
+/public/storage
+/public/hot
+/storage/app/public/pictures
+/storage/*.key
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/vendor
+/.vscode
+/.idea
+Homestead.json
+Homestead.yaml
+.env
+.git
