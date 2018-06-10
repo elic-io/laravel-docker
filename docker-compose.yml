@@ -4,6 +4,9 @@ services:
   # NGINX
   web:
     image: rjdwebsites/realplaygaming:web
+    build:
+      context: ./
+      dockerfile: web.dockerfile
     container_name: gotcha-web
     volumes_from:
       - app
@@ -20,8 +23,8 @@ services:
       # args:
       #   buildno: 1
     container_name: gotcha-app
-    # volumes:
-      # - ./:/var/www
+    volumes:
+      - ./:/var/www
     env_file: ".env"
     links:
       - database
@@ -68,8 +71,8 @@ services:
   database:
     image: postgres:latest
     container_name: gotcha-postgres
-    # volumes:
-    #   - dbdata:/var/lib/postgres
+    volumes:
+      - dbdata:/var/lib/postgres
     environment:
       - "POSTGRES_DB=gotcha"
       - "POSTGRES_USER=postgres"
