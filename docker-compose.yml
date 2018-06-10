@@ -1,38 +1,24 @@
-version: '2'
+version: '3'
 services:
-
-  # NGINX
-  web:
-    image: rjdwebsites/realplaygaming:web
-    build:
-      context: ./
-      dockerfile: web.dockerfile
-    container_name: gotcha-web
-    volumes_from:
-      - app
-    ports:
-      - "8181:80"
-
   # Laravel PHP
   app:
-    # image: rjdwebsites/realplaygaming:app
-    # image: apptesting:latest
+    image: laravel-www
     build:
-      context: ./
-      dockerfile: app.dockerfile
+      context: .
+      dockerfile: docker/Dockerfile
       # args:
       #   buildno: 1
-    container_name: gotcha-app
+    container_name: laravel-docker-app
     volumes:
-      - ./:/var/www
+      - .:/var/www/html
     env_file: ".env"
-    links:
-      - database
       # - engine
+    depends_on:
+      - database
     ports:
-      - "80:80"
-    expose:
-      - 80
+      - "8080:80"
+    #expose:
+    #  - 80
 
   # # F# Game engine
   # engine:
