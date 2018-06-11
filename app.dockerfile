@@ -38,7 +38,7 @@ RUN ls && chown -R www-data:www-data storage bootstrap/cache public \
     && find /var/www -type d -exec chmod ug+s {} \; \
     && find /var/www -type f -exec chmod 644 {} \; \
     && pwd && ls && cd /var/www/ && chgrp -R www-data storage bootstrap/cache \
-    && chmod -R ug+rwx storage bootstrap/cache
+    && chmod -R ug+rwx storage bootstrap/cache 
 
 USER www-data
 # RUN if [ ! -f .env ]; then cp .env.example .env; fi
@@ -48,6 +48,10 @@ RUN php artisan optimize; \
     php artisan cache:clear; \
     php artisan config:clear; \
     php artisan view:clear; \
-    php artisan config:cache
+    php artisan config:cache; 
+#ENTRYPOINT ["/tmp/start/start.sh"]
 
-CMD  php artisan migrate:refresh --seed
+USER root
+COPY ./start.sh /tmp   
+RUN chmod u+x /tmp/start.sh
+#ENTRYPOINT ["/tmp/start.sh"]
