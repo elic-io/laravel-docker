@@ -1,35 +1,22 @@
 version: '3'
 services:
-  # NGINX
-  web:
-    image: rjdwebsites/realplaygaming:web
-    build:
-      context: ./
-      dockerfile: web.dockerfile
-    container_name: gotcha-web
-    ports:
-      - "8080:80"
-    depends_on:
-      - app
   # Laravel PHP
   app:
     image: laravel-www
     build:
-      context: ./
-      dockerfile: app.dockerfile
+      context: .
+      dockerfile: docker/Dockerfile
       # args:
       #   buildno: 1
-    container_name: gotcha-app
-    command: sh -c './wait-for.sh database:5432 -- sh start.sh'
+    container_name: laravel-docker-app
     volumes:
-      - ./:/var/www
+      - .:/var/www/html
     env_file: ".env"
+      # - engine
     depends_on:
       - database
-    tty: true
-      # - engine
-    # ports:
-    #   - "80:80"
+    ports:
+      - "8080:80"
     #expose:
     #  - 80
 
@@ -79,7 +66,7 @@ services:
       - "POSTGRES_ROOT_PASSWORD=secret"
       - "LC_ALL=C.UTF-8"
     ports:
-      - "5432:5432"
+        - "5432:5432"
 
 volumes:
   dbdata:
